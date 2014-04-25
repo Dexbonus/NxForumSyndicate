@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace Plex.Diagnostics
@@ -10,10 +8,18 @@ namespace Plex.Diagnostics
     {
         static Dictionary<String, Task> tasks = new Dictionary<String, Task>();
 
+        static public IEnumerable<Task> Tasks
+        {
+            get
+            {
+                return tasks.Values;
+            }
+        }
+
         //Create
         static public void CreateTask(String n)
         {
-            tasks.Add(n,new Task());
+            tasks.Add(n, new Task() { Name = n });
         }
 
         //Read
@@ -22,15 +28,17 @@ namespace Plex.Diagnostics
             return tasks[n];
         }
 
-        static public void SaveResults()
+        static public void SaveResults(Stream stream)
         {
-            FileStream output = new FileStream("TimeAnalystResults.txt", FileMode.Create);
-            foreach (KeyValuePair<String, Task> kvp in tasks)
-            {
-                Byte[] b = Encoding.ASCII.GetBytes(kvp.Key + " : " + kvp.Value.ToString() + " Ticks\n");
-                output.Write(b, 0, b.Length);
-            }
-            output.Close();
+            using (var Writer = new StreamWriter(stream))
+                foreach (var v in Tasks)
+                    Writer.WriteLine(v.Name + " : " + v.Duration + " Ticks | " + v.GetMilliseconds() + " Milliseconds ");
+        }
+
+        static public void SaveResults(TextWriter writer)
+        {
+            foreach (var v in Tasks)
+                writer.WriteLine(v.Name + " : " + v.Duration + " Ticks | " + v.GetMilliseconds() + " Milliseconds ");
         }
 
         //Update
@@ -47,11 +55,9 @@ namespace Plex.Diagnostics
         }
 
         //delete
-        static public void RemoteTask(String n)
+        static public void RemoveTask(String n)
         {
             tasks.Remove(n);
         }
-
-        
     }
 }

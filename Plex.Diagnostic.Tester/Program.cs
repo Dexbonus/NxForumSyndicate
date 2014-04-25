@@ -17,7 +17,9 @@ namespace Plex.Diagnostics.Tester
             Console.WriteLine("Hello World");
 
             TimeAnalyst.StopTask("Hello");
-            TimeAnalyst.SaveResults();
+            TimeAnalyst.SaveResults(Console.Out);
+            Console.ReadLine();
+            
         }
     }
 }

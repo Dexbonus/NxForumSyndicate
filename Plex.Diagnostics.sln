@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Diagnostics", "Plex.Diagnostics\Plex.Diagnostics.csproj", "{E90EF576-4CC5-4B63-8081-81903DCEE102}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plex.Diagnostic.Tester", "Plex.Diagnostic.Tester\Plex.Diagnostic.Tester.csproj", "{B6EE26FF-C3A0-4140-BE05-FD3265606718}"
