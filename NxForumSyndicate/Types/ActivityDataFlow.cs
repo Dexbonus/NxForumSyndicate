@@ -20,15 +20,17 @@ namespace NxForumSyndicate.Types
         public static ActivityDataFlow GetCurrentActivityDataFlow()
         {
             using (var client = new WebClient())
-                return new ActivityDataFlow() { Content = client.DownloadString(endpoint) };
+                return new ActivityDataFlow() 
+                {
+                    Content = client.DownloadString(endpoint),
+                    Time = DateTime.Now
+                };
         }
 
-        public string Content
-        {
-            get;
-            set;
-        }
-
+        public string Content { get; set; }
+        public  DateTime Time { get; set; }
+        
+        
         public IEnumerable<ActivityDataElement> GetAcivityDataElements()
         {
             string pattern2 = "<li class=\"activitybit forum_post\">";
@@ -51,7 +53,6 @@ namespace NxForumSyndicate.Types
                 if (Start != -1 && End != -1)
                     yield return new ActivityDataElement() { Content = Content.Substring(Start, (End + pattern4.Length - Start)) };
             }
- 
         }
     }
 }

@@ -42,6 +42,7 @@
     <Compile Include="Types\ActivityDataElement.cs" />
     <Compile Include="SyndicationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\ActivityDataElementType.cs" />
     <Compile Include="Types\ActivityDataFlow.cs" />
     <Compile Include="Types\Channel.cs" />
     <Compile Include="Types\Item.cs" />
