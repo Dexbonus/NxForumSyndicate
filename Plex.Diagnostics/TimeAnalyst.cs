@@ -13,6 +13,7 @@ namespace Plex.Diagnostics
             get
             {
                 return tasks.Values;
+
             }
         }
 
