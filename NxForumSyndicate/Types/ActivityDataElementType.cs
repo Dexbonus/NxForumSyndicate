@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NxForumSyndicate.Types
 {
-    enum ActivityDataElementType
+    public enum ActivityDataElementType
     {
         Thread,
         Post,

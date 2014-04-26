@@ -10,8 +10,8 @@ namespace NxForumSyndicate.Test
         static void Main(string[] args)
         {
             var Manager = SyndicationManager.Instance;
-            var ElementStrings = Manager.GetDataFlowElementStrings();
-            Console.WriteLine(ElementStrings.Last());
+            var Ele = Manager.GetDataFlowElement().First();
+            Console.WriteLine(Ele.GetLinkValue(Ele.Content));
             Console.ReadLine();
         }
     }

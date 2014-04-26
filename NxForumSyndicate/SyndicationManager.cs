@@ -31,6 +31,13 @@ namespace NxForumSyndicate
                 yield return element.Content;
         }
 
+        public IEnumerable<ActivityDataElement> GetDataFlowElement()
+        {
+            foreach (var element in dataFlow.GetAcivityDataElements())
+                yield return element;
+
+        }
+
         
         static SyndicationManager()
         {

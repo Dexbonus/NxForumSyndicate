@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace NxForumSyndicate.Types
 {
-    class ActivityDataElement
+    public class ActivityDataElement
     {
         /// <summary>
         /// The base URL of all links (since links in the source are all relatively linked)
@@ -70,7 +70,7 @@ namespace NxForumSyndicate.Types
         /// raw data content.
         /// </summary>
         String content;
-        String GetAvatarValue(String value)
+        public String GetAvatarValue(String value)
         {
             //Initialize and instansiate variables.
             Int32 sDist = 5, eDist = 1;
@@ -87,14 +87,39 @@ namespace NxForumSyndicate.Types
             return BaseUrl + result;
         }
 
-        String GetTitleValue(String Value)
+        public String GetTitleValue(String value)
         {
-            //todo implemenet this.
-            //Int32 sDist = 5, eDist = 1;
-            //String titlePattern = "<div class=\"title\">[\\s\\S]*?(</div>)";
-            //String linkTagStart = string.Empty;
+            Int32 sDist = 22, eDist = 6;
+            String titlePattern = "<div class=\"title\">[\\s\\S]*?(</div>)";
+            String linkTagStart = "</?a[\\s\\S]*?(>)";
+            String linkTagEnd = string.Empty;
 
-            return null;
+            //Use regex to extract div from Content, then remove all link tags from div and excess whitespace.
+            var cleanOutput = Regex.Replace(Regex.Replace(Regex.Match(value, titlePattern).Value, linkTagStart, ""), @"\s+", " ").Trim();
+            //Cut out delimiters
+            var result = cleanOutput.Substring(sDist, cleanOutput.Length - eDist - sDist);
+            return result;
+        }
+
+        public String GetExcerptValue(string value)
+        {
+            Int32 sDist = 21, eDist = 6;
+            String DivPatten = "<div class=\"excerpt\">[\\s\\S]*?(</div>)";
+            var result = Regex.Match(value, DivPatten).Value;
+            result = result.Substring(sDist, result.Length - eDist - sDist);
+            return result;
+        }
+
+        public String GetLinkValue(string value)
+        {
+            Int32 sDist = 9, eDist = 2;
+            String DivPattern = "<div class=\"fulllink\">[\\s\\S]*?(</div>)";
+            string LinkPattern = "<a href=\"[\\s\\S]*?(\">)";
+
+            var result = Regex.Match(Regex.Match(value, DivPattern).Value, LinkPattern).Value;
+            result = result.Substring(sDist, result.Length - eDist - sDist);
+
+            return BaseUrl + result;
         }
 
     }

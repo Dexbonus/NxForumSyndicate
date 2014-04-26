@@ -13,7 +13,7 @@ using System.IO;
 
 namespace NxForumSyndicate.Types
 {
-    class ActivityDataFlow
+    public class ActivityDataFlow
     {
         /// <summary>
         /// Location where we get the information to convert to RSS.
