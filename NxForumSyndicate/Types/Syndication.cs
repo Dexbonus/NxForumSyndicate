@@ -5,6 +5,9 @@ using System.Text;
 
 namespace NxForumSyndicate.Types
 {
+    /// <summary>
+    /// This represents an entire RSS document
+    /// </summary>
     public class Syndication
     {
         public string Version { get; set; }

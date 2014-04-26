@@ -5,6 +5,9 @@ using System.Text;
 
 namespace NxForumSyndicate.Types
 {
+    /// <summary>
+    /// This class represents the Channel tag in a RSS feed.
+    /// </summary>
     public class Channel
     {
         //Mandatory

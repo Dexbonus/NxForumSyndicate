@@ -5,6 +5,9 @@ using System.Text;
 
 namespace NxForumSyndicate.Types
 {
+    /// <summary>
+    /// This class represents the Item tag in a RSS feed.
+    /// </summary>
     public class Item
     {
         //Mantory
