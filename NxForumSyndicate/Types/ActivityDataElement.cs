@@ -31,7 +31,8 @@ namespace NxForumSyndicate.Types
         /// <summary>
         /// Partial text from the post or thread.
         /// </summary>
-        public string Excerpt { get; private set; }
+        public String Excerpt { get; private set; }
+        public String Title { get; private set; }
         
         /// <summary>
         /// Raw text from the ActivityDataElement delimiters
@@ -44,12 +45,13 @@ namespace NxForumSyndicate.Types
             }
             set
             {
-                ///ensures we don't have null pointer exceptions;
-                content = value ?? String.Empty;
-                if (content != String.Empty)
+                if ((content = value ?? String.Empty) != String.Empty)
                 {
                     //if the value is not null and empty then it must be valid (since this is a private class)
+                    Link = GetLinkValue(content);
+                    Title = GetTitleValue(content);
                     Avatar = GetAvatarValue(content);
+                    Excerpt = GetExcerptValue(content);
                 }
             }
         }
@@ -92,7 +94,7 @@ namespace NxForumSyndicate.Types
             Int32 sDist = 22, eDist = 6;
             String titlePattern = "<div class=\"title\">[\\s\\S]*?(</div>)";
             String linkTagStart = "</?a[\\s\\S]*?(>)";
-            String linkTagEnd = string.Empty;
+            String linkTagEnd = String.Empty;
 
             //Use regex to extract div from Content, then remove all link tags from div and excess whitespace.
             var cleanOutput = Regex.Replace(Regex.Replace(Regex.Match(value, titlePattern).Value, linkTagStart, ""), @"\s+", " ").Trim();
@@ -101,7 +103,7 @@ namespace NxForumSyndicate.Types
             return result;
         }
 
-        public String GetExcerptValue(string value)
+        public String GetExcerptValue(String value)
         {
             Int32 sDist = 21, eDist = 6;
             String DivPatten = "<div class=\"excerpt\">[\\s\\S]*?(</div>)";
@@ -110,11 +112,11 @@ namespace NxForumSyndicate.Types
             return result;
         }
 
-        public String GetLinkValue(string value)
+        public String GetLinkValue(String value)
         {
             Int32 sDist = 9, eDist = 2;
             String DivPattern = "<div class=\"fulllink\">[\\s\\S]*?(</div>)";
-            string LinkPattern = "<a href=\"[\\s\\S]*?(\">)";
+            String LinkPattern = "<a href=\"[\\s\\S]*?(\">)";
 
             var result = Regex.Match(Regex.Match(value, DivPattern).Value, LinkPattern).Value;
             result = result.Substring(sDist, result.Length - eDist - sDist);
@@ -122,5 +124,14 @@ namespace NxForumSyndicate.Types
             return BaseUrl + result;
         }
 
+        public Item ToItem()
+        {
+            Item item = new Item();
+            item.Link = Link;
+            item.Title = Title;
+            item.Description = Excerpt;
+
+            return item;
+        }
     }
 }

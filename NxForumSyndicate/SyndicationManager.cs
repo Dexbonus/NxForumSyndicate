@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Timers;
+using System.Xml;
 using NxForumSyndicate.Types;
 
 namespace NxForumSyndicate
@@ -21,6 +22,7 @@ namespace NxForumSyndicate
 
         //Functional Variables
         ActivityDataFlow dataFlow;
+        Syndication syndication;
         Timer timer;
 
 
@@ -35,10 +37,13 @@ namespace NxForumSyndicate
         {
             foreach (var element in dataFlow.GetAcivityDataElements())
                 yield return element;
-
         }
 
-        
+        public XmlDocument GetXml()
+        {
+           return syndication.ToXmlDocument();
+        }
+
         static SyndicationManager()
         {
             Instance = new SyndicationManager();
@@ -48,14 +53,51 @@ namespace NxForumSyndicate
         {
             //Get First Set of DataFlow
             dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();
+            syndication = new Syndication();
+
+            Channel mainChannel = new Channel();
+            mainChannel.Title = "Nexon Forums";
+            mainChannel.Language = "en";
+            mainChannel.Description = "All discussions on nexon forums";
+            mainChannel.Link = "http://forum2.nexon.net";
+
+            foreach (var element in dataFlow.GetAcivityDataElements())
+                mainChannel.ItemCollection.Add(element.ToItem());
+
+            syndication.Channels.Add(mainChannel);
 
             //Set timer to get subsequent flows of data. This is to cache data from the service. 
             //It is possible to do this because there is a limit to posting frequency.
             timer = new Timer();
             timer.Interval = DefaultTimer;
             timer.AutoReset = true;
-            timer.Elapsed += (s, e) => dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();
+            timer.Elapsed += timer_Elapsed;
             timer.Start();
+        }
+
+        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            Sync();
+        }
+
+        public void Sync(){
+            lock(dataFlow)
+                lock(syndication)
+                {
+                    dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();
+                    syndication = new Syndication();
+
+                    Channel mainChannel = new Channel();
+                    mainChannel.Title = "Nexon Forums";
+                    mainChannel.Language = "en";
+                    mainChannel.Description = "All discussions on nexon forums";
+                    mainChannel.Link = "http://forum2.nexon.net";
+
+                    foreach (var element in dataFlow.GetAcivityDataElements())
+                        mainChannel.ItemCollection.Add(element.ToItem());
+
+                    syndication.Channels.Add(mainChannel);
+                }
         }
     }
 }

@@ -37,7 +37,7 @@ namespace NxForumSyndicate.Types
         /// <summary>
         /// Information recieved from the source 
         /// </summary>
-        public string Content { get; set; }
+        public String Content { get; set; }
         /// <summary>
         /// The time information was recieved from the source
         /// </summary>
