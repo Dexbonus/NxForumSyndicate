@@ -130,16 +130,27 @@ namespace NxForumSyndicate.Types
         }
 
         public GameType GetGameTypeValue(String value)
-        {            
+        {        
+            //not that great at regex so you might want to review this
             String DivPattern = "<div class=\"title\">[\\s\\S]*?(</div>)";
             String LinkPattern = "<a href=\"[\\s\\S]*?(\">)";
 
             var result = Regex.Matches(Regex.Match(value, DivPattern).Value, LinkPattern)[2].Value;
             result = Regex.Match(result, "\\?(.*?)\\-").Value;
-            var id = Int32.Parse(result.Replace("?", "").Replace("-", ""));
+            var id = Int32.Parse(result.Replace("?", "").Replace("-", ""));            
 
             if (GameData.DragonNest.Contains(id))
                 return GameType.DragonNest;
+            else if (GameData.CombatArms.Contains(id))
+                return GameType.CombatArms;
+            else if (GameData.Atlantica.Contains(id))
+                return GameType.Atlantica;
+            else if (GameData.Mabinogi.Contains(id))
+                return GameType.Mobinogi;
+            else if (GameData.MapleStory.Contains(id))
+                return GameType.MapleStory;
+            else if (GameData.Vindictus.Contains(id))
+                return GameType.Vindictus;
 
             return GameType.Unknown;
         }

@@ -10,6 +10,9 @@ namespace NxForumSyndicate.Types
         DragonNest,
         Vindictus,
         Mobinogi,
-        Unknown //adding this since I haven't had a chance to collect the ids for every nexon game yet
+        CombatArms,
+        MapleStory,
+        Atlantica,
+        Unknown //adding this as a fallback
     }
 }
