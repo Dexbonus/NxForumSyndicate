@@ -72,7 +72,7 @@ namespace NxForumSyndicate
             timer.Interval = DefaultTimer;
             timer.AutoReset = true;
             timer.Elapsed += timer_Elapsed;
-            timer.Start();
+            timer.Start();            
         }
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
@@ -98,6 +98,17 @@ namespace NxForumSyndicate
 
                     syndication.Channels.Add(mainChannel);
                 }
+        }
+
+        public XmlDocument GetXmlForGame(GameType type)
+        {
+            var doc = syndication.ToXmlDocument();
+
+            foreach (XmlNode node in doc.SelectNodes("//item"))
+                if (node.SelectSingleNode("category").InnerText != type.ToString())
+                    node.ParentNode.RemoveChild(node);
+
+            return doc;             
         }
     }
 }

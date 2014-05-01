@@ -27,11 +27,30 @@ namespace NxForumSyndicate.Types
         public static ActivityDataFlow GetCurrentActivityDataFlow()
         {
             using (var client = new WebClient())
-                return new ActivityDataFlow() 
+            {
+                //this method allows getting the content as xml instead of raw html with extra data we don't need (scripts, css, etc)
+                client.Headers["X-Requested-With"] = "XMLHttpRequest";
+
+                return new ActivityDataFlow()
                 {
-                    Content = client.DownloadString(endpoint),
+                    Content = Encoding.ASCII.GetString(client.UploadValues(endpoint,
+                        new System.Collections.Specialized.NameValueCollection()
+                        {
+                            {"securitytoken", "guest"},
+                            {"pp", "30"}, //per-page variable, doesn't seem to actually limit the ammount of results though
+                            {"sortby", "recent"},
+                            {"time", "anytime"},
+                            {"show", "all"} //can be filtered by: all, photos or forums                   
+                        })),
                     Time = DateTime.Now
-                };
+                };                
+
+                //return new ActivityDataFlow()
+                //{
+                //    Content = client.DownloadString(endpoint),
+                //    Time = DateTime.Now
+                //};
+            }
         }
 
         /// <summary>
@@ -48,7 +67,7 @@ namespace NxForumSyndicate.Types
         /// </summary>
         /// <returns></returns>
         public IEnumerable<ActivityDataElement> GetAcivityDataElements()
-        {
+        {            
             //regex patterns
             string pattern2 = "<li class=\"activitybit forum_post\">";
             string pattern3 = "<li class=\"activitybit forum_thread\">";
