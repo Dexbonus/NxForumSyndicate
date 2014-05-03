@@ -11,10 +11,12 @@ namespace NxForumSyndicate
     /// <summary>
     /// All of the data  from the RSS feed should be retrieved from a singleton.
     /// </summary>
-    public class SyndicationManager
+    public sealed class SyndicationManager
     {
-        public const int DefaultTimer = 30000;
-        public static SyndicationManager Instance { get; private set; }
+        static readonly SyndicationManager instance = new SyndicationManager();
+
+        public static SyndicationManager Instance { get { return instance; } }
+        public const int DefaultTimer = 30000;        
       
 
         //Settings
@@ -43,18 +45,13 @@ namespace NxForumSyndicate
         {
            return syndication.ToXmlDocument();
         }
-
-        static SyndicationManager()
-        {
-            Instance = new SyndicationManager();
-        }
-
+        
         private SyndicationManager()
         {
             //Get First Set of DataFlow
-            dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();
+            dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();            
             syndication = new Syndication();
-
+            
             Channel mainChannel = new Channel();
             mainChannel.Title = "Nexon Forums";
             mainChannel.Language = "en";
