@@ -24,7 +24,7 @@ namespace NxForumSyndicate.Types
         {
             XmlDocument document = new XmlDocument();
             var documentNode = document.CreateElement("rss");
-            var versionAttr = document.CreateAttribute("version");
+            var versionAttr = document.CreateAttribute("version");            
             versionAttr.Value = Version.ToString();
 
             foreach(var channel in Channels)

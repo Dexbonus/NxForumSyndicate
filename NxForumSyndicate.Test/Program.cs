@@ -16,6 +16,7 @@ namespace NxForumSyndicate.Test
             { 
                 var Manager = SyndicationManager.Instance;
                 var Ele = Manager.GetXml();
+                //var Ele = Manager.GetXmlForGame(Types.GameType.DragonNest);
 
                 using (var stream = new FileStream("syndication.xml", FileMode.Create))
                     new XmlSerializer(typeof(XmlDocument)).Serialize(stream, Ele);
