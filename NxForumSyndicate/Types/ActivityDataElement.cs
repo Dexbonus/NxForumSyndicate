@@ -32,6 +32,10 @@ namespace NxForumSyndicate.Types
         /// Partial text from the post or thread.
         /// </summary>
         public String Excerpt { get; private set; }
+        /// <summary>
+        /// The game the post applies to.
+        /// </summary>
+        public GameType Game { get; private set; }
         public String Title { get; private set; }
         
         /// <summary>
@@ -52,6 +56,7 @@ namespace NxForumSyndicate.Types
                     Title = GetTitleValue(content);
                     Avatar = GetAvatarValue(content);
                     Excerpt = GetExcerptValue(content);
+                    Game = GetGameTypeValue(content);
                 }
             }
         }
@@ -124,12 +129,41 @@ namespace NxForumSyndicate.Types
             return BaseUrl + result;
         }
 
+        public GameType GetGameTypeValue(String value)
+        {        
+            //not that great at regex so you might want to review this
+            String DivPattern = "<div class=\"title\">[\\s\\S]*?(</div>)";
+            String LinkPattern = "<a href=\"[\\s\\S]*?(\">)";
+
+            var result = Regex.Matches(Regex.Match(value, DivPattern).Value, LinkPattern)[2].Value;
+            result = Regex.Match(result, "\\?(.*?)\\-").Value;
+            var id = Int32.Parse(result.Replace("?", "").Replace("-", ""));            
+
+            if (GameData.DragonNest.Contains(id))
+                return GameType.DragonNest;
+            else if (GameData.CombatArms.Contains(id))
+                return GameType.CombatArms;
+            else if (GameData.Atlantica.Contains(id))
+                return GameType.Atlantica;
+            else if (GameData.Mabinogi.Contains(id))
+                return GameType.Mobinogi;
+            else if (GameData.MapleStory.Contains(id))
+                return GameType.MapleStory;
+            else if (GameData.Vindictus.Contains(id))
+                return GameType.Vindictus;
+
+            return GameType.Unknown;
+        }
+
         public Item ToItem()
         {
             Item item = new Item();
             item.Link = Link;
             item.Title = Title;
             item.Description = Excerpt;
+
+            //using this for the game type since it wasn't being used :p
+            item.Category = Game.ToString();
 
             return item;
         }
