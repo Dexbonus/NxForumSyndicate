@@ -19,7 +19,7 @@ namespace NxForumSyndicate.Types
             Version = String.Empty;
             Channels = new List<Channel>();
         }
-
+         
         public XmlDocument ToXmlDocument()
         {
             XmlDocument document = new XmlDocument();

@@ -45,11 +45,6 @@ namespace NxForumSyndicate.Types
                     Time = DateTime.Now
                 };                
 
-                //return new ActivityDataFlow()
-                //{
-                //    Content = client.DownloadString(endpoint),
-                //    Time = DateTime.Now
-                //};
             }
         }
 
