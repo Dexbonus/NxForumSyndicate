@@ -37,7 +37,7 @@ namespace NxForumSyndicate.Types
         /// </summary>
         public GameType Game { get; private set; }
         public String Title { get; private set; }
-        
+        public String Author { get; private set; }
         /// <summary>
         /// Raw text from the ActivityDataElement delimiters
         /// </summary>
@@ -56,7 +56,9 @@ namespace NxForumSyndicate.Types
                     Title = GetTitleValue(content);
                     Avatar = GetAvatarValue(content);
                     Excerpt = GetExcerptValue(content);
+                    Time = GetTimeValue(content);
                     Game = GetGameTypeValue(content);
+                    Author = GetAuthorValue(content);
                 }
             }
         }
@@ -71,6 +73,7 @@ namespace NxForumSyndicate.Types
             content = String.Empty;
             Excerpt = String.Empty;
             Time = DateTime.MinValue;
+            Author = String.Empty;
             EntryType = ActivityDataElementType.Unknown;
         }
         /// <summary>
@@ -129,6 +132,34 @@ namespace NxForumSyndicate.Types
             return BaseUrl + result;
         }
 
+        public DateTime GetTimeValue(String value)
+        {
+            string DayPattern = "(<span class=\"date\">)(Today|Yesterday)[\\s\\S]*?(</span>)";
+            string TimePattern = "(<span class=\"time\">)[\\s\\S]*?(</span>)";
+            Int32 sDist = 19, eDist = 7;
+            DateTime time;
+
+            var DayMatch = Regex.Match(value, DayPattern);
+            if (!DayMatch.Success)
+                throw new Exception("Could not extract the Date");
+
+            var result = Regex.Match(value, TimePattern).Value;
+            result = result.Substring(sDist, result.Length - eDist - sDist);
+
+            time = DayMatch.Value.Contains("Today") ?
+                DateTime.Parse(result) :
+                DateTime.Today.Add(DateTime.Parse(result) - DateTime.Today - TimeSpan.FromDays(1));
+             
+            return time;
+        }
+
+        public String GetAuthorValue(string value)
+        {
+            string AuthorPattern = "(?:<div class=\"title\">[\\s\\S]*?<a[\\s\\S]*?>)([\\s\\S]*?)(?:</a>[\\s\\S]*?</div>)";
+            string result = Regex.Match(value, AuthorPattern).Groups[1].Value;
+            return result;
+        }
+
         public GameType GetGameTypeValue(String value)
         {        
             //not that great at regex so you might want to review this
@@ -161,7 +192,8 @@ namespace NxForumSyndicate.Types
             item.Link = Link;
             item.Title = Title;
             item.Description = Excerpt;
-
+            item.PubDate = Time.ToLongDateString() + " " + Time.ToLongTimeString();
+            item.Author = Author;
             //using this for the game type since it wasn't being used :p
             item.Category = Game.ToString();
 
