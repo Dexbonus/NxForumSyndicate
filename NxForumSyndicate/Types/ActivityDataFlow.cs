@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Xml.Serialization;
 using System.IO;
+using System.Text.RegularExpressions;
 
 
 namespace NxForumSyndicate.Types
@@ -69,32 +70,36 @@ namespace NxForumSyndicate.Types
         public IEnumerable<ActivityDataElement> GetAcivityDataElements()
         {            
             //regex patterns
-            string pattern2 = "<li class=\"activitybit forum_post\">";
-            string pattern3 = "<li class=\"activitybit forum_thread\">";
-            string pattern4 = "</li>";
+            string pattern = "(?:<li class=\"activitybit forum_(?:post|thread))\">([\\s\\S]*?)(?:</li>)";
+            //string pattern2 = "<li class=\"activitybit forum_post\">";
+            //string pattern3 = "<li class=\"activitybit forum_thread\">";
+            //string pattern4 = "</li>";
 
             //Find location of the first post and the first thread.
-            int post = Content.IndexOf(pattern2);
-            int thread = Content.IndexOf(pattern3);
+            //int post = Content.IndexOf(pattern2);
+            //int thread = Content.IndexOf(pattern3);
+
+            foreach (Match match in Regex.Matches(Content, pattern))
+                yield return new ActivityDataElement() { Content = match.Value };
 
             //Find which one appears first.
-            Content = Content.Substring(((post < thread) ? post : thread));
+            //Content = Content.Substring(((post < thread) ? post : thread));
 
             
-            for (int Start = 0, End = 0; Start != -1 && End != -1; Content = Content.Substring(End + pattern4.Length))
-            {
-                //Find index of the first post and first post.
-                post = Content.IndexOf(pattern2);
-                thread = Content.IndexOf(pattern3);
-                //Determine which comes first, thread or post and find the index.
-                Start = (post < thread) ? post : thread;
-                //Find the index of the ending delimiter
-                End = Content.IndexOf(pattern4);
+            //for (int Start = 0, End = 0; Start != -1 && End != -1; Content = Content.Substring(End + pattern4.Length))
+            //{
+            //    //Find index of the first post and first post.
+            //    post = Content.IndexOf(pattern2);
+            //    thread = Content.IndexOf(pattern3);
+            //    //Determine which comes first, thread or post and find the index.
+            //    Start = (post < thread) ? post : thread;
+            //    //Find the index of the ending delimiter
+            //    End = Content.IndexOf(pattern4);
 
-                //If the value of the index of the start and end of data is valid create and return the activityDataElement.
-                if (Start != -1 && End != -1)
-                    yield return new ActivityDataElement() { Content = Content.Substring(Start, (End + pattern4.Length - Start)) };
-            }
+            //    //If the value of the index of the start and end of data is valid create and return the activityDataElement.
+            //    if (Start != -1 && End != -1)
+            //        yield return new ActivityDataElement() { Content = Content.Substring(Start, (End + pattern4.Length - Start)) };
+            //}
         }
     }
 }

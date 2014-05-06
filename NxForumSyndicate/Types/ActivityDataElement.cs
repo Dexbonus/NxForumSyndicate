@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
 namespace NxForumSyndicate.Types
 {
     public class ActivityDataElement
@@ -99,16 +98,10 @@ namespace NxForumSyndicate.Types
 
         public String GetTitleValue(String value)
         {
-            Int32 sDist = 22, eDist = 6;
-            String titlePattern = "<div class=\"title\">[\\s\\S]*?(</div>)";
-            String linkTagStart = "</?a[\\s\\S]*?(>)";
-            String linkTagEnd = String.Empty;
-
-            //Use regex to extract div from Content, then remove all link tags from div and excess whitespace.
-            var cleanOutput = Regex.Replace(Regex.Replace(Regex.Match(value, titlePattern).Value, linkTagStart, ""), @"\s+", " ").Trim();
-            //Cut out delimiters
-            var result = cleanOutput.Substring(sDist, cleanOutput.Length - eDist - sDist);
-            return result;
+            String titlePattern = "(?:<div class=\"title\">)([\\s\\S]*?)(?:</div>)";
+            String Result = Regex.Match(value, titlePattern).Groups[1].Value.Trim();
+            Result = Regex.Replace(Result, "<[^>]*>", "");
+            return Result;
         }
 
 
@@ -184,13 +177,16 @@ namespace NxForumSyndicate.Types
         public Item ToItem()
         {
             Item item = new Item();
-            item.Link = Link;
-            item.Title = Title;
-            item.Description = Excerpt;
-            item.PubDate = Time.ToLongDateString() + " " + Time.ToLongTimeString();
-            item.Author = Author;
+            item.link = Link;
+            item.title = Title;
+            item.description = Excerpt;
+            item.pubDate = Time.ToString("r");
+            item.guid = Link;
+            //*** DO NOT set item.Author to the Author property in this function. ***
+
+            //item.Author = Author;
             //using this for the game type since it wasn't being used :p
-            item.Category = Game.ToString();
+            item.category = Game.ToString();
 
             return item;
         }

@@ -11,17 +11,17 @@ namespace NxForumSyndicate.Types
     public class Item
     {
         //Mantory
-        public String Title { get; set; }
-        public String Link { get; set; }
-        public String Description { get; set; }
+        public String title { get; set; }
+        public String link { get; set; }
+        public String description { get; set; }
 
         //Optional
-        public String Author { get; set; }
-        public String Category { get; set; }
-        public String Comments { get; set; }
-        public String Enclosure { get; set; }
-        public String Guid { get; set; }
-        public String PubDate { get; set; }
-        public String Source { get; set; }
+        public String author { get; set; }
+        public String category { get; set; }
+        public String comments { get; set; }
+        public String enclosure { get; set; }
+        public String guid { get; set; }
+        public String pubDate { get; set; }
+        public String source { get; set; }
     }
 }
