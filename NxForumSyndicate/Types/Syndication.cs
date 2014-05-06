@@ -24,8 +24,10 @@ namespace NxForumSyndicate.Types
         {
             XmlDocument document = new XmlDocument();
             var documentNode = document.CreateElement("rss");
-            var versionAttr = document.CreateAttribute("version");            
-            versionAttr.Value = Version.ToString();
+            var versionAttr = document.CreateAttribute("version");  
+            
+            versionAttr.Value = (Version == String.Empty)? "2.0" : Version;
+            documentNode.Attributes.Append(versionAttr);
 
             foreach(var channel in Channels)
                 documentNode.AppendChild(CreateRssChannel(document, channel));
@@ -38,8 +40,6 @@ namespace NxForumSyndicate.Types
         {
             Object value;
             var channelNode = doc.CreateElement("channel");
-            
-            
 
             foreach (var property in channel.GetType().GetProperties())
                 if ((value = property.GetValue(channel, null)) is String)
@@ -62,7 +62,7 @@ namespace NxForumSyndicate.Types
                 if ((value = property.GetValue(item, null)) is string)
                     if ((((string)value) ?? string.Empty) != string.Empty)
                     {
-                        var element = document.CreateElement(property.Name.ToLower());
+                        var element = document.CreateElement(property.Name);
                         element.InnerText = value.ToString();
                         itemNode.AppendChild(element);
                     }
