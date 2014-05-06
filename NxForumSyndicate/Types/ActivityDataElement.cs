@@ -111,25 +111,26 @@ namespace NxForumSyndicate.Types
             return result;
         }
 
+
         public String GetExcerptValue(String value)
         {
-            Int32 sDist = 21, eDist = 6;
-            String DivPatten = "<div class=\"excerpt\">[\\s\\S]*?(</div>)";
-            var result = Regex.Match(value, DivPatten).Value;
-            result = result.Substring(sDist, result.Length - eDist - sDist);
+            String DivPatten = "(?:<div class=\"excerpt\">)([\\s\\S]*?)(?:</div>)";
+            var result = Regex.Match(value, DivPatten).Groups[1].Value;
             return result;
         }
 
         public String GetLinkValue(String value)
         {
-            Int32 sDist = 9, eDist = 2;
-            String DivPattern = "<div class=\"fulllink\">[\\s\\S]*?(</div>)";
-            String LinkPattern = "<a href=\"[\\s\\S]*?(\">)";
-
-            var result = Regex.Match(Regex.Match(value, DivPattern).Value, LinkPattern).Value;
-            result = result.Substring(sDist, result.Length - eDist - sDist);
-
+            String LPattern = "(?:<div class=\"fulllink\">)(?:<a href=\"([\\s\\S]*?)\">)+?(?:[\\s\\S]*?)(?:</div>)";
+            var result = Regex.Match(value, LPattern).Groups[1].Value;
             return BaseUrl + result;
+        }
+
+        public String GetAuthorValue(string value)
+        {
+            string AuthorPattern = "(?:<div class=\"title\">[\\s\\S]*?<a[\\s\\S]*?>)([\\s\\S]*?)(?:</a>[\\s\\S]*?</div>)";
+            string result = Regex.Match(value, AuthorPattern).Groups[1].Value;
+            return result;
         }
 
         public DateTime GetTimeValue(String value)
@@ -153,12 +154,6 @@ namespace NxForumSyndicate.Types
             return time;
         }
 
-        public String GetAuthorValue(string value)
-        {
-            string AuthorPattern = "(?:<div class=\"title\">[\\s\\S]*?<a[\\s\\S]*?>)([\\s\\S]*?)(?:</a>[\\s\\S]*?</div>)";
-            string result = Regex.Match(value, AuthorPattern).Groups[1].Value;
-            return result;
-        }
 
         public GameType GetGameTypeValue(String value)
         {        

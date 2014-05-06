@@ -15,12 +15,10 @@ namespace NxForumSyndicate.Test
             try 
             { 
                 var Manager = SyndicationManager.Instance;
-                var Ele = Manager.GetXml();
-                //var Ele = Manager.GetXmlForGame(Types.GameType.DragonNest);
-
+                var Ele = Manager.GetSyndiciation();
                 using (var stream = new FileStream("syndication.xml", FileMode.Create))
                     new XmlSerializer(typeof(XmlDocument)).Serialize(stream, Ele);
-                Console.WriteLine(Ele);
+      
             }
             catch (Exception e) { 
                 Console.Error.WriteLine(e.ToString());

@@ -20,92 +20,71 @@ namespace NxForumSyndicate
       
 
         //Settings
-        int interval;
+        public Int32 Interval
+        {
+            get
+            {
+                return Convert.ToInt32(timer.Interval);
+            }
+            set
+            {
+                timer.Interval = value;
+            }
+        }
+
+        bool pollDragonNest;
+        bool pollMapleStory;
+        bool pollVindictus;
+        bool pollAtlantica;
+        bool pollCombatArms;
+        bool pollMabinogi;
 
         //Functional Variables
-        ActivityDataFlow dataFlow;
-        Syndication syndication;
         Timer timer;
+        ICollection<ActivityDataElement> ItemCollection;
 
+        public XmlDocument GetSyndiciation()
+        {
+            var syndication = new Syndication();
 
-        //Presently here for testing.
-        public IEnumerable<string> GetDataFlowElementStrings()
-        {
-            foreach (var element in dataFlow.GetAcivityDataElements())
-                yield return element.Content;
-        }
-
-        public IEnumerable<ActivityDataElement> GetDataFlowElement()
-        {
-            foreach (var element in dataFlow.GetAcivityDataElements())
-                yield return element;
-        }
-
-        public XmlDocument GetXml()
-        {
-           return syndication.ToXmlDocument();
-        }
-        
-        private SyndicationManager()
-        {
-            //Get First Set of DataFlow
-            dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();            
-            syndication = new Syndication();
-            
             Channel mainChannel = new Channel();
             mainChannel.Title = "Nexon Forums";
             mainChannel.Language = "en";
             mainChannel.Description = "All discussions on nexon forums";
             mainChannel.Link = "http://forum2.nexon.net";
 
-            foreach (var element in dataFlow.GetAcivityDataElements())
+            foreach (var element in ItemCollection)
                 mainChannel.ItemCollection.Add(element.ToItem());
 
             syndication.Channels.Add(mainChannel);
+            return syndication.ToXmlDocument();
 
-            //Set timer to get subsequent flows of data. This is to cache data from the service. 
-            //It is possible to do this because there is a limit to posting frequency.
+        }
+        
+        private SyndicationManager()
+        {
+            ItemCollection = new List<ActivityDataElement>();
+            PollActivityDataFlow();
+
             timer = new Timer();
             timer.Interval = DefaultTimer;
             timer.AutoReset = true;
-            timer.Elapsed += timer_Elapsed;
-            timer.Start();            
+            timer.Elapsed += (s,e)=> PollActivityDataFlow();
+            timer.Start();    
         }
 
-        void timer_Elapsed(object sender, ElapsedEventArgs e)
+        public void PollActivityDataFlow()
         {
-            Sync();
+            foreach (var element in ActivityDataFlow.GetCurrentActivityDataFlow().GetAcivityDataElements())
+                if(ItemCollection.FirstOrDefault(p => p.Author == element.Author && p.Excerpt == element.Excerpt)== null)
+                    ItemCollection.Add(element);
+            ItemCollection.OrderBy(p => p.Time);
         }
 
-        public void Sync(){
-            lock(dataFlow)
-                lock(syndication)
-                {
-                    dataFlow = ActivityDataFlow.GetCurrentActivityDataFlow();
-                    syndication = new Syndication();
-
-                    Channel mainChannel = new Channel();
-                    mainChannel.Title = "Nexon Forums";
-                    mainChannel.Language = "en";
-                    mainChannel.Description = "All discussions on nexon forums";
-                    mainChannel.Link = "http://forum2.nexon.net";
-
-                    foreach (var element in dataFlow.GetAcivityDataElements())
-                        mainChannel.ItemCollection.Add(element.ToItem());
-
-                    syndication.Channels.Add(mainChannel);
-                }
-        }
 
         public XmlDocument GetXmlForGame(GameType type)
         {
-            var doc = syndication.ToXmlDocument();
-
-            foreach (XmlNode node in doc.SelectNodes("//item"))
-                if (node.SelectSingleNode("category").InnerText != type.ToString())
-                    node.ParentNode.RemoveChild(node);
-
-            return doc;             
+            throw new NotImplementedException();
         }
     }
 }
